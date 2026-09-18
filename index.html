@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Tennis Game</title>
+    <script src="js/analytics.js" type="module"></script>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div class="header">
+        <div class="controlButton">
+            <div class="pauseAndNew">
+                <span id="go" class="pause">Pause Game</span>
+                <span id="restart">New Game</span>
+            </div>
+        </div>
+        <div class="score">
+            <div class="best">
+                <label>BEST</label>
+                <span id="bestScore">0 : 0</span>
+            </div>
+        </div>
+    </div>
+    <canvas id="canvas" tabindex="1"></canvas>
+    <div id="gameOver">
+        <div id="gameOverInner">
+            <div id="msg"></div>
+            <div id="scoreGameOver"></div>
+            <div id="restartbtn">Restart</div>
+            <div class="playfull">
+                <a href="https://www.gameanything.com/game/table-tennis/" target="_blank">Play More Levels &raquo;</a>
+            </div>
+            <div id="featured">
+                <p>Our Game Extensions for Extra Fun:</p>
+                <ul id="related"></ul>
+            </div>
+        </div>
+    </div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
