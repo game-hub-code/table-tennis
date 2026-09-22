@@ -61,31 +61,33 @@ canvas.style.width  = (canvas.width  / 2) + 'px';
 canvas.style.height = (canvas.height / 2) + 'px';
 
 // ── helpers ──────────────────────────────────────────────────────────
+// X positions per opponent count. Rightmost paddle is always near the wall.
+// Additional paddles are placed deeper into the court (smaller X = closer to centre).
+// Ball must beat each paddle in sequence to score.
+const ROBOT_X_POSITIONS = {
+  1: [1230],
+  2: [900, 1230],
+  3: [700, 970, 1230]
+};
+
 function makeRobots(count) {
-  /*
-   * Place count AI paddles on the right side.
-   * Canvas right-side available space: x from ~canvas.width-250 to canvas.width-20
-   * Each paddle width = 30, gap = 20 between paddles (total slot = 50px each).
-   * For 1 opponent: single paddle at canonical position (canvas.width - 50).
-   * For 2/3: spread them evenly in a 200px right-side zone.
-   */
-  const paddleW   = 30;
-  const paddleH   = 200;
-  const startX    = canvas.width - 50 - (count - 1) * 50;
-  const result    = [];
-  for (let i = 0; i < count; i++) {
-    result.push({
-      width:  paddleW,
-      height: paddleH,
-      x:      startX + i * 50,
-      y:      (canvas.height / 2) - 100,
-      inning: 0,
-      score:  0,
-      move:   0,
-      speed:  speed[2]
-    });
-  }
-  return result;
+  const xPositions = ROBOT_X_POSITIONS[count] || ROBOT_X_POSITIONS[1];
+  const paddleH    = 200;
+  const zoneH      = canvas.height / count; // each robot owns a vertical zone
+
+  return xPositions.map((x, i) => ({
+    width:   30,
+    height:  paddleH,
+    x,
+    // Start each robot centred in its zone
+    y:       zoneH * i + (zoneH / 2) - (paddleH / 2),
+    inning:  0,
+    score:   0,
+    move:    0,
+    speed:   speed[2],
+    zoneTop: zoneH * i,           // the vertical band this robot defends
+    zoneBot: zoneH * (i + 1)
+  }));
 }
 
 function turnDelayIsOver() {
@@ -274,8 +276,9 @@ function update() {
       serve = true;
     }
 
-    // ball exits right → player scores
-    if (ball.x >= canvas.width - ball.width) {
+    // ball exits right → player scores (past rightmost robot's x)
+    const rightmostX = robots[robots.length - 1].x + robots[robots.length - 1].width;
+    if (ball.x >= rightmostX + 60) {
       resetTurn(playerPaddle, robots[robots.length - 1]);
       serve = true;
     }
@@ -290,9 +293,11 @@ function update() {
 
     // serve / new round
     if (turnDelayIsOver() && turn && serve) {
-      ball.moveX = (turn === playerPaddle) ? DIRECTION.LEFT : DIRECTION.RIGHT;
+      const isPlayerTurn = (turn === playerPaddle);
+      ball.moveX = isPlayerTurn ? DIRECTION.LEFT : DIRECTION.RIGHT;
       ball.moveY = [DIRECTION.UP, DIRECTION.DOWN][Math.round(Math.random())];
-      ball.x = (turn === playerPaddle) ? canvas.width - 100 : 100;
+      // Serve from near the serving side — always start in the left half
+      ball.x = isPlayerTurn ? canvas.width - 200 : 150;
       ball.y = Math.floor(Math.random() * (canvas.height - 400)) + 200;
       turn  = null;
       serve = false;
@@ -309,21 +314,30 @@ function update() {
     if      (ball.moveX === DIRECTION.LEFT)  ball.x -= ball.speed;
     else if (ball.moveX === DIRECTION.RIGHT) ball.x += ball.speed;
 
-    // ── AI paddle movement ───────────────────────────────────────────
+    // ── AI paddle movement (zone-coordinated) ───────────────────────
     robots.forEach(robot => {
-      const targetY = ball.y - (robot.height / 2);
+      // Each robot tracks the ball only when it's in, or approaching, its zone.
+      // "Zone" = the vertical band this robot owns.
+      const ballInZone = ball.y + ball.height >= robot.zoneTop && ball.y <= robot.zoneBot;
 
-      if (ball.moveX === DIRECTION.RIGHT) {
-        // ball coming toward this paddle — track aggressively
-        if (robot.y > targetY) robot.y -= robot.speed / 1.5;
-        else if (robot.y < targetY) robot.y += robot.speed / 1.5;
+      // Target: keep paddle centred on ball if ball is in zone,
+      // otherwise return to zone centre (so robots don't all pile at one Y).
+      let targetY;
+      if (ballInZone) {
+        targetY = ball.y - (robot.height / 2);
       } else {
-        // ball moving away — drift back toward centre slowly
-        if (robot.y > targetY) robot.y -= robot.speed / 4;
-        else if (robot.y < targetY) robot.y += robot.speed / 4;
+        // Return to zone centre
+        targetY = robot.zoneTop + (robot.zoneBot - robot.zoneTop) / 2 - robot.height / 2;
       }
 
-      // boundary
+      const trackSpeed = (ball.moveX === DIRECTION.RIGHT && ballInZone)
+        ? robot.speed / 1.5   // aggressive — ball heading toward this paddle
+        : robot.speed / 4;    // lazy drift when ball is elsewhere
+
+      if (robot.y > targetY + 2) robot.y -= trackSpeed;
+      else if (robot.y < targetY - 2) robot.y += trackSpeed;
+
+      // Clamp to canvas (not just zone — paddle can leave zone to intercept)
       if (robot.y >= canvas.height - robot.height) robot.y = canvas.height - robot.height;
       else if (robot.y <= 0) robot.y = 0;
     });
