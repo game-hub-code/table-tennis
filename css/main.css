@@ -366,3 +366,68 @@ body {
 #featured li a {
   color: #aeb8ca;
 }
+/* ── new controls ─────────────────────────────────────────────── */
+
+/* match points input */
+.pauseAndNew > input[type="number"] {
+  width: 70px;
+  box-sizing: border-box;
+  padding: 8px 6px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  color: #f3f7ff;
+  border: 1px solid #a84dff;
+  background: linear-gradient(180deg, #c97aff 0%, #8b34d6 100%);
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(139, 52, 214, 0.28);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  flex-shrink: 0;
+}
+
+.pauseAndNew > input[type="number"]::-webkit-inner-spin-button,
+.pauseAndNew > input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.pauseAndNew > input[type="number"]:focus {
+  outline: 2px solid #fff;
+  outline-offset: 1px;
+}
+
+/* widen the control bar to fit extra controls */
+.controlButton {
+  width: 100%;
+  max-width: 520px;
+}
+
+.header {
+  width: 720px;
+  max-width: 100%;
+}
+
+/* ── center restart button in game-over overlay ───────────────── */
+#gameOverInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#restartbtn {
+  margin: 8px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playfull {
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

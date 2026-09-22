@@ -17,6 +17,12 @@
                     <option value="medium" selected>Medium</option>
                     <option value="hard">Hard</option>
                 </select>
+                <select id="opponentCount" title="Number of opponents">
+                    <option value="1" selected>1 Opponent</option>
+                    <option value="2">2 Opponents</option>
+                    <option value="3">3 Opponents</option>
+                </select>
+                <input id="matchPoints" type="number" min="1" max="99" value="5" title="Points to win" placeholder="Pts">
                 <span id="restart">New Game</span>
             </div>
         </div>
@@ -34,7 +40,8 @@
             <div id="scoreGameOver"></div>
             <div id="restartbtn">
                  <div class="playfull">
-                    <a target="_blank">Restart</a> </div>
+                    <a target="_blank">Restart</a>
+                </div>
             </div>
         </div>
     </div>
