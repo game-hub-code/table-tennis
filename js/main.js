@@ -8,7 +8,23 @@ const DIRECTION = {
 };
 
 let raf;
-const speed = [11, 11, 12];
+// [ballSpeed, playerPaddleResetSpeed, robotPaddleSpeed]
+const DIFFICULTY_PRESETS = {
+  easy: [9, 10, 4],
+  medium: [11, 10, 5.5],
+  hard: [13, 10, 7.5]
+};
+let difficulty = (function () {
+  const stored = window.localStorage.getItem('difficulty');
+  if (!stored) return 'medium';
+  try {
+    const parsed = JSON.parse(stored);
+    return (parsed === 'easy' || parsed === 'medium' || parsed === 'hard') ? parsed : 'medium';
+  } catch (e) {
+    return 'medium';
+  }
+})();
+let speed = DIFFICULTY_PRESETS[difficulty].slice();
 let ball = {};
 let playerPaddle = {};
 let robotPaddle = {};
@@ -656,6 +672,19 @@ $('#restart').click(function () {
     //const storageGrade = localStorage.getItem('grade');
     //grade = JSON.parse(storageGrade);;
     //restart(grade);
+    restart();
+});
+// difficulty select
+document.getElementById('difficulty').value = difficulty;
+$('#difficulty').on('change', function () {
+    difficulty = this.value;
+    window.localStorage.setItem(
+        'difficulty',
+        JSON.stringify(difficulty)
+    );
+    speed = DIFFICULTY_PRESETS[difficulty].slice();
+    $('#go').attr('class', 'pause');
+    document.getElementById('go').innerHTML = 'Pause Game';
     restart();
 });
 // play and pause

@@ -218,6 +218,37 @@ body {
   float: none;
 }
 
+.pauseAndNew > select {
+  width: 100%;
+  box-sizing: border-box;
+  display: inline-block;
+  padding: 8px 6px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  text-align-last: center;
+  color: #f3f7ff;
+  border: 1px solid #2f6fed;
+  background: linear-gradient(180deg, #4d8dff 0%, #2f6fed 100%);
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(47, 111, 237, 0.28);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.pauseAndNew > select:focus {
+  outline: 2px solid #fff;
+  outline-offset: 1px;
+}
+
+.pauseAndNew > select option {
+  color: #0b1220;
+  background: #fff;
+}
+
 .score {
   width: 194px;
   height: auto;
