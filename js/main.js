@@ -331,7 +331,7 @@ function update() {
       }
 
       const trackSpeed = (ball.moveX === DIRECTION.RIGHT && ballInZone)
-        ? robot.speed / 1.5   // aggressive — ball heading toward this paddle
+        ? robot.speed / 1.0   // aggressive — ball heading toward this paddle
         : robot.speed / 4;    // lazy drift when ball is elsewhere
 
       if (robot.y > targetY + 2) robot.y -= trackSpeed;
