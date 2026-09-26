@@ -446,7 +446,6 @@ function resetTurn(victor, loser) {
 
 // ── keyboard ──────────────────────────────────────────────────────────
 function listen() {
-  function listen() {
   document.addEventListener('keydown', function (key) {
     if (key.keyCode === 38 || key.keyCode === 87) playerPaddle.move = DIRECTION.UP;
     if (key.keyCode === 40 || key.keyCode === 83) playerPaddle.move = DIRECTION.DOWN;
